@@ -23,9 +23,6 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
-    /**
-     * Cadastrar novo cliente
-     */
     @PostMapping
     public ResponseEntity<?> cadastrar(@Valid @RequestBody ClienteResquetDTO cliente) {
         try {
@@ -39,18 +36,12 @@ public class ClienteController {
         }
     }
 
-    /**
-     * Listar todos os clientes ativos
-     */
     @GetMapping
     public ResponseEntity<List<Cliente>> listar() {
         List<Cliente> clientes = clienteService.listarAtivos();
         return ResponseEntity.ok(clientes);
     }
 
-    /**
-     * Buscar cliente por ID
-     */
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         Optional<Cliente> cliente = clienteService.buscarPorId(id);
@@ -62,9 +53,6 @@ public class ClienteController {
         }
     }
 
-    /**
-     * Atualizar cliente
-     */
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Long id,
                                        @Validated @RequestBody Cliente cliente) {
@@ -79,9 +67,6 @@ public class ClienteController {
         }
     }
 
-    /**
-     * Inativar cliente (soft delete)
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> inativar(@PathVariable Long id) {
         try {
@@ -95,18 +80,12 @@ public class ClienteController {
         }
     }
 
-    /**
-     * Buscar clientes por nome
-     */
     @GetMapping("/buscar")
     public ResponseEntity<List<Cliente>> buscarPorNome(@RequestParam String nome) {
         List<Cliente> clientes = clienteService.buscarPorNome(nome);
         return ResponseEntity.ok(clientes);
     }
 
-    /**
-     * Buscar cliente por email
-     */
     @GetMapping("/email/{email}")
     public ResponseEntity<?> buscarPorEmail(@PathVariable String email) {
         Optional<Cliente> cliente = clienteService.buscarPorEmail(email);
