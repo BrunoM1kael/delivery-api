@@ -9,12 +9,12 @@ import java.util.Map;
 
 @Data
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL) // Não mostra campos nulos no JSON
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponseDTO {
     private LocalDateTime timestamp;
     private Integer status;
     private String error;
     private String message;
-    private String path; // O roteiro exige isso
-    private Map<String, String> details; // Detalhes para erros de validação
+    private String path;
+    private Map<String, String> details;
 }

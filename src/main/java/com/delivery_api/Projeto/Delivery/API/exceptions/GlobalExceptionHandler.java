@@ -4,6 +4,7 @@ import com.delivery_api.Projeto.Delivery.API.dto.ErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,7 +17,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 1. Tratar Erros de Validação (@Valid)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDTO> handleValidationException(
             MethodArgumentNotValidException ex, HttpServletRequest request) {
@@ -40,7 +40,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
-    // 2. Tratar Conflitos (Dados duplicados)
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ErrorResponseDTO> handleConflictException(
             ConflictException ex, HttpServletRequest request) {
@@ -56,17 +55,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
-    // 3. Tratar Entidade Não Encontrada (Ex: ID inexistente)
-    // Nota: Certifique-se de ter a classe EntityNotFoundException criada
     @ExceptionHandler(IllegalArgumentException.class)
-    // Usando IllegalArgumentException pois foi o que usamos nos Services,
-    // mas o ideal seria criar uma EntityNotFoundException específica.
     public ResponseEntity<ErrorResponseDTO> handleNotFoundException(
             IllegalArgumentException ex, HttpServletRequest request) {
 
         ErrorResponseDTO error = ErrorResponseDTO.builder()
                 .timestamp(LocalDateTime.now())
-                .status(HttpStatus.NOT_FOUND.value()) // 404 conforme roteiro
+                .status(HttpStatus.NOT_FOUND.value())
                 .error("Recurso não encontrado")
                 .message(ex.getMessage())
                 .path(request.getRequestURI())
@@ -75,7 +70,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    // 4. Tratar Erros Gerais
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponseDTO> handleAccessDeniedException(
+            AccessDeniedException ex, HttpServletRequest request) {
+
+        ErrorResponseDTO error = ErrorResponseDTO.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.FORBIDDEN.value())
+                .error("Acesso Negado")
+                .message("Você não tem permissão para realizar esta operação.")
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGenericException(
             Exception ex, HttpServletRequest request) {

@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,18 +19,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/restaurantes")
 @CrossOrigin(origins = "*")
-@Tag(name = "Restaurantes", description = "Gerenciamento de restaurantes parceiros") // Roteiro 5: @Tag
+@Tag(name = "Restaurantes", description = "Gerenciamento de restaurantes parceiros")
 public class RestauranteController {
 
     @Autowired
     private RestauranteService restauranteService;
 
     @PostMapping
-    @Operation(summary = "Cadastrar novo restaurante", description = "Cria um restaurante com status ativo") // Roteiro 5: @Operation
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Cadastrar novo restaurante", description = "Cria um restaurante com status ativo")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Restaurante criado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos ou violação de validação"),
-            @ApiResponse(responseCode = "409", description = "Restaurante já cadastrado") // Vamos implementar isso na Fase 2
+            @ApiResponse(responseCode = "409", description = "Restaurante já cadastrado")
     })
     public ResponseEntity<RestauranteResponseDTO> cadastrar(@Valid @RequestBody RestauranteRequestDTO dto) {
         RestauranteResponseDTO novoRestaurante = restauranteService.cadastrar(dto);
@@ -53,6 +55,7 @@ public class RestauranteController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Atualizar dados do restaurante")
     public ResponseEntity<RestauranteResponseDTO> atualizar(@PathVariable Long id,
                                                             @Valid @RequestBody RestauranteRequestDTO dto) {
@@ -60,6 +63,7 @@ public class RestauranteController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Remover restaurante", description = "Exclui logicamente ou fisicamente o restaurante")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         restauranteService.deletar(id);
