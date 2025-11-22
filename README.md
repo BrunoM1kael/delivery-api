@@ -4,7 +4,7 @@ Sistema de delivery desenvolvido com Spring Boot e Java 17.
 
 ## 🚀 Tecnologias
 
-- **Java 17 LTS** (Roteiro pedia 21, mas o ambiente está com 17)
+- **Java 21 LTS**
 - Spring Boot 3.2.x
 - Spring Web
 - Spring Data JPA
@@ -19,7 +19,7 @@ Sistema de delivery desenvolvido com Spring Boot e Java 17.
 
 ## 🏃‍♂️ Como executar
 
-1.  **Pré-requisitos:** JDK 17+ instalado
+1.  **Pré-requisitos:** JDK 21+ instalado
 2.  Clone o repositório
 3.  Execute: `./mvnw spring-boot:run`
 4.  A aplicação estará disponível em `http://localhost:8080`
