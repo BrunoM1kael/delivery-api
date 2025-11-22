@@ -17,14 +17,18 @@ public class RestauranteService {
     private RestauranteRepository restauranteRepository;
 
     public RestauranteResponseDTO cadastrar(RestauranteRequestDTO dto) {
+        // Mudança 1: Usar ConflictException (Roteiro 6)
         if (restauranteRepository.findByNome(dto.getNome()).isPresent()) {
-            throw new IllegalArgumentException("Restaurante já cadastrado: " + dto.getNome());
+            throw new com.delivery_api.Projeto.Delivery.API.exceptions.ConflictException("Restaurante já cadastrado: " + dto.getNome());
         }
 
         Restaurante restaurante = new Restaurante();
         restaurante.setNome(dto.getNome());
         restaurante.setCategoria(dto.getCategoria());
-        restaurante.setEndereco(dto.getEndereco());
+
+        // Mudança 2: Usar o CEP que validamos
+        restaurante.setEndereco(dto.getEndereco() + " - CEP: " + dto.getCep());
+
         restaurante.setTelefone(dto.getTelefone());
         restaurante.setTaxaEntrega(dto.getTaxaEntrega());
         restaurante.setAtivo(true);
