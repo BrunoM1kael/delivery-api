@@ -17,7 +17,6 @@ public class RestauranteService {
     private RestauranteRepository restauranteRepository;
 
     public RestauranteResponseDTO cadastrar(RestauranteRequestDTO dto) {
-        // Mudança 1: Usar ConflictException (Roteiro 6)
         if (restauranteRepository.findByNome(dto.getNome()).isPresent()) {
             throw new com.delivery_api.Projeto.Delivery.API.exceptions.ConflictException("Restaurante já cadastrado: " + dto.getNome());
         }
@@ -26,7 +25,6 @@ public class RestauranteService {
         restaurante.setNome(dto.getNome());
         restaurante.setCategoria(dto.getCategoria());
 
-        // Mudança 2: Usar o CEP que validamos
         restaurante.setEndereco(dto.getEndereco() + " - CEP: " + dto.getCep());
 
         restaurante.setTelefone(dto.getTelefone());

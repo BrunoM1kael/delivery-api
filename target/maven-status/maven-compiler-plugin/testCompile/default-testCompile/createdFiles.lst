@@ -1,0 +1,17 @@
+com\delivery_api\Projeto\Delivery\API\service\ServicesFinalTest.class
+com\delivery_api\Projeto\Delivery\API\service\ClienteServiceTest.class
+com\delivery_api\Projeto\Delivery\API\service\PedidoServiceTest.class
+com\delivery_api\Projeto\Delivery\API\controller\ControllerCoverageTest.class
+com\delivery_api\Projeto\Delivery\API\GeneralCoverageTest.class
+com\delivery_api\Projeto\Delivery\API\controller\ClienteControllerIT.class
+com\delivery_api\Projeto\Delivery\API\DeliveryApiApplicationTests.class
+com\delivery_api\Projeto\Delivery\API\ProjetoDeliveryApiApplicationTests.class
+com\delivery_api\Projeto\Delivery\API\model\ModelCoverageTest.class
+com\delivery_api\Projeto\Delivery\API\controller\MoreControllersTest.class
+com\delivery_api\Projeto\Delivery\API\controller\ProdutoController.class
+com\delivery_api\Projeto\Delivery\API\security\SecurityAndExceptionCoverageTest.class
+com\delivery_api\Projeto\Delivery\API\controller\ClienteController.class
+com\delivery_api\Projeto\Delivery\API\service\RestauranteServiceTest.class
+com\delivery_api\Projeto\Delivery\API\service\ServiceCoverageTest.class
+com\delivery_api\Projeto\Delivery\API\model\EntityFullCoverageTest.class
+com\delivery_api\Projeto\Delivery\API\exceptions\ExceptionFlowTest.class

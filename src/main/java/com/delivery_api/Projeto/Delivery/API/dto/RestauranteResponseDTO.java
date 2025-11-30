@@ -2,9 +2,12 @@ package com.delivery_api.Projeto.Delivery.API.dto;
 
 import com.delivery_api.Projeto.Delivery.API.entity.Restaurante;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
 @Data
+@NoArgsConstructor
 public class RestauranteResponseDTO {
     private Long id;
     private String nome;

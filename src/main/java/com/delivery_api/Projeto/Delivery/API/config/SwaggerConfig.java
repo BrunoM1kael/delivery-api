@@ -14,7 +14,6 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI customOpenAPI() {
-        // Define o esquema de segurança (JWT Bearer Token)
         String securitySchemeName = "bearerAuth";
 
         return new OpenAPI()

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RestauranteService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Projeto-Delivery-API</a> &gt; <a href="index.source.html" class="el_package">com.delivery_api.Projeto.Delivery.API.service</a> &gt; <span class="el_source">RestauranteService.java</span></div><h1>RestauranteService.java</h1><pre class="source lang-java linenums">package com.delivery_api.Projeto.Delivery.API.service;
+
+import com.delivery_api.Projeto.Delivery.API.dto.RestauranteRequestDTO;
+import com.delivery_api.Projeto.Delivery.API.dto.RestauranteResponseDTO;
+import com.delivery_api.Projeto.Delivery.API.entity.Restaurante;
+import com.delivery_api.Projeto.Delivery.API.repository.RestauranteRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+<span class="fc" id="L14">public class RestauranteService {</span>
+
+    @Autowired
+    private RestauranteRepository restauranteRepository;
+
+    public RestauranteResponseDTO cadastrar(RestauranteRequestDTO dto) {
+        // Mudança 1: Usar ConflictException (Roteiro 6)
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        if (restauranteRepository.findByNome(dto.getNome()).isPresent()) {</span>
+<span class="nc" id="L22">            throw new com.delivery_api.Projeto.Delivery.API.exceptions.ConflictException(&quot;Restaurante já cadastrado: &quot; + dto.getNome());</span>
+        }
+
+<span class="fc" id="L25">        Restaurante restaurante = new Restaurante();</span>
+<span class="fc" id="L26">        restaurante.setNome(dto.getNome());</span>
+<span class="fc" id="L27">        restaurante.setCategoria(dto.getCategoria());</span>
+
+        // Mudança 2: Usar o CEP que validamos
+<span class="fc" id="L30">        restaurante.setEndereco(dto.getEndereco() + &quot; - CEP: &quot; + dto.getCep());</span>
+
+<span class="fc" id="L32">        restaurante.setTelefone(dto.getTelefone());</span>
+<span class="fc" id="L33">        restaurante.setTaxaEntrega(dto.getTaxaEntrega());</span>
+<span class="fc" id="L34">        restaurante.setAtivo(true);</span>
+<span class="fc" id="L35">        restaurante.setAvaliacao(java.math.BigDecimal.ZERO);</span>
+
+<span class="fc" id="L37">        restaurante = restauranteRepository.save(restaurante);</span>
+<span class="fc" id="L38">        return new RestauranteResponseDTO(restaurante);</span>
+    }
+
+    @Transactional(readOnly = true)
+    public List&lt;RestauranteResponseDTO&gt; listarAtivos() {
+<span class="fc" id="L43">        return restauranteRepository.findByAtivoTrue().stream()</span>
+<span class="fc" id="L44">                .map(RestauranteResponseDTO::new)</span>
+<span class="fc" id="L45">                .toList();</span>
+    }
+
+    @Transactional(readOnly = true)
+    public RestauranteResponseDTO buscarPorId(Long id) {
+<span class="fc" id="L50">        Restaurante restaurante = restauranteRepository.findById(id)</span>
+<span class="pc" id="L51">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Restaurante não encontrado: &quot; + id));</span>
+<span class="fc" id="L52">        return new RestauranteResponseDTO(restaurante);</span>
+    }
+
+    public RestauranteResponseDTO atualizar(Long id, RestauranteRequestDTO dto) {
+<span class="nc" id="L56">        Restaurante restaurante = restauranteRepository.findById(id)</span>
+<span class="nc" id="L57">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Restaurante não encontrado: &quot; + id));</span>
+
+<span class="nc" id="L59">        restaurante.setNome(dto.getNome());</span>
+<span class="nc" id="L60">        restaurante.setCategoria(dto.getCategoria());</span>
+<span class="nc" id="L61">        restaurante.setEndereco(dto.getEndereco());</span>
+<span class="nc" id="L62">        restaurante.setTelefone(dto.getTelefone());</span>
+<span class="nc" id="L63">        restaurante.setTaxaEntrega(dto.getTaxaEntrega());</span>
+
+<span class="nc" id="L65">        restaurante = restauranteRepository.save(restaurante);</span>
+<span class="nc" id="L66">        return new RestauranteResponseDTO(restaurante);</span>
+    }
+
+    public void inativar(Long id) {
+<span class="fc" id="L70">        Restaurante restaurante = restauranteRepository.findById(id)</span>
+<span class="pc" id="L71">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Restaurante não encontrado: &quot; + id));</span>
+<span class="fc" id="L72">        restaurante.setAtivo(false);</span>
+<span class="fc" id="L73">        restauranteRepository.save(restaurante);</span>
+<span class="fc" id="L74">    }</span>
+
+    public void deletar(Long id) {
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        if (!restauranteRepository.existsById(id)) {</span>
+<span class="nc" id="L78">            throw new IllegalArgumentException(&quot;Restaurante não encontrado: &quot; + id);</span>
+        }
+<span class="fc" id="L80">        restauranteRepository.deleteById(id);</span>
+<span class="fc" id="L81">    }</span>
+
+    @Transactional(readOnly = true)
+    public List&lt;RestauranteResponseDTO&gt; buscarPorCategoria(String categoria) {
+<span class="fc" id="L85">        return restauranteRepository.findByCategoria(categoria).stream()</span>
+<span class="fc" id="L86">                .map(RestauranteResponseDTO::new)</span>
+<span class="fc" id="L87">                .toList();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

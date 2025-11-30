@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PedidoService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Projeto-Delivery-API</a> &gt; <a href="index.source.html" class="el_package">com.delivery_api.Projeto.Delivery.API.service</a> &gt; <span class="el_source">PedidoService.java</span></div><h1>PedidoService.java</h1><pre class="source lang-java linenums">package com.delivery_api.Projeto.Delivery.API.service;
+
+import com.delivery_api.Projeto.Delivery.API.dto.PedidoRequestDTO;
+import com.delivery_api.Projeto.Delivery.API.dto.PedidoResponseDTO;
+import com.delivery_api.Projeto.Delivery.API.entity.Cliente;
+import com.delivery_api.Projeto.Delivery.API.entity.Pedido;
+import com.delivery_api.Projeto.Delivery.API.entity.Restaurante;
+import com.delivery_api.Projeto.Delivery.API.enums.StatusPedido;
+import com.delivery_api.Projeto.Delivery.API.repository.ClienteRepository;
+import com.delivery_api.Projeto.Delivery.API.repository.PedidoRepository;
+import com.delivery_api.Projeto.Delivery.API.repository.RestauranteRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+<span class="fc" id="L21">public class PedidoService {</span>
+
+    @Autowired
+    private PedidoRepository pedidoRepository;
+
+    @Autowired
+    private ClienteRepository clienteRepository;
+
+    @Autowired
+    private RestauranteRepository restauranteRepository;
+
+    public PedidoResponseDTO criarPedido(PedidoRequestDTO dto) {
+<span class="fc" id="L33">        Cliente cliente = clienteRepository.findById(dto.getClienteId())</span>
+<span class="pc" id="L34">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Cliente não encontrado: &quot; + dto.getClienteId()));</span>
+
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        if (!cliente.getAtivo()) {</span>
+<span class="nc" id="L37">            throw new IllegalArgumentException(&quot;Cliente inativo não pode fazer pedidos&quot;);</span>
+        }
+
+<span class="fc" id="L40">        Restaurante restaurante = restauranteRepository.findById(dto.getRestauranteId())</span>
+<span class="pc" id="L41">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Restaurante não encontrado: &quot; + dto.getRestauranteId()));</span>
+
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">        if (!restaurante.getAtivo()) {</span>
+<span class="nc" id="L44">            throw new IllegalArgumentException(&quot;Restaurante fechado ou inativo no momento&quot;);</span>
+        }
+
+<span class="fc" id="L47">        Pedido pedido = new Pedido();</span>
+<span class="fc" id="L48">        pedido.setClienteId(cliente.getId());</span>
+<span class="fc" id="L49">        pedido.setRestaurante(restaurante);</span>
+<span class="fc" id="L50">        pedido.setStatus(StatusPedido.PENDENTE.name());</span>
+<span class="fc" id="L51">        pedido.setDataPedido(LocalDateTime.now());</span>
+<span class="fc" id="L52">        pedido.setNumeroPedido(&quot;PED-&quot; + UUID.randomUUID().toString().substring(0, 8).toUpperCase());</span>
+<span class="fc" id="L53">        pedido.setValorTotal(dto.getValorTotal());</span>
+<span class="fc" id="L54">        pedido.setObservacoes(dto.getObservacoes());</span>
+<span class="fc" id="L55">        pedido.setItens(dto.getItens());</span>
+
+<span class="fc" id="L57">        pedido = pedidoRepository.save(pedido);</span>
+<span class="fc" id="L58">        return new PedidoResponseDTO(pedido);</span>
+    }
+
+    @Transactional(readOnly = true)
+    public List&lt;PedidoResponseDTO&gt; listarPorCliente(Long clienteId) {
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if (!clienteRepository.existsById(clienteId)) {</span>
+<span class="nc" id="L64">            throw new IllegalArgumentException(&quot;Cliente não encontrado: &quot; + clienteId);</span>
+        }
+
+<span class="fc" id="L67">        return pedidoRepository.findByClienteIdOrderByDataPedidoDesc(clienteId).stream()</span>
+<span class="fc" id="L68">                .map(PedidoResponseDTO::new)</span>
+<span class="fc" id="L69">                .toList();</span>
+    }
+
+    @Transactional(readOnly = true)
+    public PedidoResponseDTO buscarPorId(Long id) {
+<span class="fc" id="L74">        Pedido pedido = pedidoRepository.findById(id)</span>
+<span class="pc" id="L75">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Pedido não encontrado: &quot; + id));</span>
+<span class="fc" id="L76">        return new PedidoResponseDTO(pedido);</span>
+    }
+
+    public PedidoResponseDTO atualizarStatus(Long pedidoId, StatusPedido novoStatus) {
+<span class="fc" id="L80">        Pedido pedido = pedidoRepository.findById(pedidoId)</span>
+<span class="pc" id="L81">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Pedido não encontrado: &quot; + pedidoId));</span>
+
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        if (pedido.getStatus().equals(StatusPedido.ENTREGUE.name()) ||</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">                pedido.getStatus().equals(StatusPedido.CANCELADO.name())) {</span>
+<span class="nc" id="L85">            throw new IllegalArgumentException(&quot;Não é possível alterar o status de um pedido finalizado.&quot;);</span>
+        }
+
+<span class="fc" id="L88">        pedido.setStatus(novoStatus.name());</span>
+<span class="fc" id="L89">        pedido = pedidoRepository.save(pedido);</span>
+<span class="fc" id="L90">        return new PedidoResponseDTO(pedido);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

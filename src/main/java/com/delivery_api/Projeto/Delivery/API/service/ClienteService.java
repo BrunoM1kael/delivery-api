@@ -82,18 +82,4 @@ public class ClienteService {
         return clienteRepository.findByNomeContainingIgnoreCase(nome);
     }
 
-//    private void validarDadosCliente(ClienteResquetDTO cliente) {
-//        if (cliente.getNome() == null || cliente.getNome().trim().isEmpty()) {
-//            throw new IllegalArgumentException("Nome é obrigatório");
-//        }
-//
-//        if (cliente.getEmail() == null || cliente.getEmail().trim().isEmpty()) {
-//            throw new IllegalArgumentException("Email é obrigatório");
-//        }
-//
-//        if (cliente.getNome().length() < 2) {
-//            throw new IllegalArgumentException("Nome deve ter pelo menos 2 caracteres");
-//        }
-//    }
-
 }

@@ -2,11 +2,13 @@ package com.delivery_api.Projeto.Delivery.API.dto;
 
 import com.delivery_api.Projeto.Delivery.API.entity.Pedido;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
 public class PedidoResponseDTO {
     private Long id;
     private String numeroPedido;

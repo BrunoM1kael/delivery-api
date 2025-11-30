@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClienteService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Projeto-Delivery-API</a> &gt; <a href="index.source.html" class="el_package">com.delivery_api.Projeto.Delivery.API.service</a> &gt; <span class="el_source">ClienteService.java</span></div><h1>ClienteService.java</h1><pre class="source lang-java linenums">package com.delivery_api.Projeto.Delivery.API.service;
+
+import com.delivery_api.Projeto.Delivery.API.dto.ClienteResponseDTO;
+import com.delivery_api.Projeto.Delivery.API.dto.ClienteResquetDTO;
+import com.delivery_api.Projeto.Delivery.API.entity.Cliente;
+import com.delivery_api.Projeto.Delivery.API.exceptions.BusinessException;
+import com.delivery_api.Projeto.Delivery.API.repository.ClienteRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@Transactional
+<span class="fc" id="L18">public class ClienteService {</span>
+
+    @Autowired
+    private ClienteRepository clienteRepository;
+
+    public ClienteResponseDTO cadastrar(ClienteResquetDTO dto) {
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        if (clienteRepository.existsByEmail(dto.getEmail())) {</span>
+<span class="fc" id="L25">            throw new BusinessException(&quot;Email já cadastrado: &quot; + dto.getEmail());</span>
+        }
+
+<span class="fc" id="L28">        Cliente cliente = new Cliente();</span>
+<span class="fc" id="L29">        cliente.setNome(dto.getNome());</span>
+<span class="fc" id="L30">        cliente.setEmail(dto.getEmail());</span>
+<span class="fc" id="L31">        cliente.setTelefone(dto.getTelefone());</span>
+<span class="fc" id="L32">        cliente.setEndereco(dto.getEndereco());</span>
+<span class="fc" id="L33">        cliente.setAtivo(true);</span>
+<span class="fc" id="L34">        cliente.setDataCadastro(LocalDateTime.now());</span>
+
+
+<span class="fc" id="L37">        return new ClienteResponseDTO(clienteRepository.save(cliente));</span>
+    }
+
+    @Transactional(readOnly = true)
+    public Optional&lt;Cliente&gt; buscarPorId(Long id) {
+<span class="fc" id="L42">        return clienteRepository.findById(id);</span>
+    }
+
+    @Transactional(readOnly = true)
+    public Optional&lt;Cliente&gt; buscarPorEmail(String email) {
+<span class="fc" id="L47">        return clienteRepository.findByEmail(email);</span>
+    }
+
+    @Transactional(readOnly = true)
+    public List&lt;Cliente&gt; listarAtivos() {
+<span class="fc" id="L52">        return clienteRepository.findByAtivoTrue();</span>
+    }
+
+    public Cliente atualizar(Long id, Cliente clienteAtualizado) {
+<span class="fc" id="L56">        Cliente cliente = buscarPorId(id)</span>
+<span class="fc" id="L57">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Cliente não encontrado: &quot; + id));</span>
+
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        if (!cliente.getEmail().equals(clienteAtualizado.getEmail()) &amp;&amp;</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">                clienteRepository.existsByEmail(clienteAtualizado.getEmail())) {</span>
+<span class="nc" id="L61">            throw new IllegalArgumentException(&quot;Email já cadastrado: &quot; + clienteAtualizado.getEmail());</span>
+        }
+
+<span class="fc" id="L64">        cliente.setNome(clienteAtualizado.getNome());</span>
+<span class="fc" id="L65">        cliente.setEmail(clienteAtualizado.getEmail());</span>
+<span class="fc" id="L66">        cliente.setTelefone(clienteAtualizado.getTelefone());</span>
+<span class="fc" id="L67">        cliente.setEndereco(clienteAtualizado.getEndereco());</span>
+
+<span class="fc" id="L69">        return clienteRepository.save(cliente);</span>
+    }
+
+    public void inativar(Long id) {
+<span class="fc" id="L73">        Cliente cliente = buscarPorId(id)</span>
+<span class="fc" id="L74">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Cliente não encontrado: &quot; + id));</span>
+
+<span class="fc" id="L76">        cliente.inativar();</span>
+<span class="fc" id="L77">        clienteRepository.save(cliente);</span>
+<span class="fc" id="L78">    }</span>
+
+    @Transactional(readOnly = true)
+    public List&lt;Cliente&gt; buscarPorNome(String nome) {
+<span class="fc" id="L82">        return clienteRepository.findByNomeContainingIgnoreCase(nome);</span>
+    }
+
+//    private void validarDadosCliente(ClienteResquetDTO cliente) {
+//        if (cliente.getNome() == null || cliente.getNome().trim().isEmpty()) {
+//            throw new IllegalArgumentException(&quot;Nome é obrigatório&quot;);
+//        }
+//
+//        if (cliente.getEmail() == null || cliente.getEmail().trim().isEmpty()) {
+//            throw new IllegalArgumentException(&quot;Email é obrigatório&quot;);
+//        }
+//
+//        if (cliente.getNome().length() &lt; 2) {
+//            throw new IllegalArgumentException(&quot;Nome deve ter pelo menos 2 caracteres&quot;);
+//        }
+//    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

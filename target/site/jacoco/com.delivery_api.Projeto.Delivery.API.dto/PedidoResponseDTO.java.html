@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PedidoResponseDTO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Projeto-Delivery-API</a> &gt; <a href="index.source.html" class="el_package">com.delivery_api.Projeto.Delivery.API.dto</a> &gt; <span class="el_source">PedidoResponseDTO.java</span></div><h1>PedidoResponseDTO.java</h1><pre class="source lang-java linenums">package com.delivery_api.Projeto.Delivery.API.dto;
+
+import com.delivery_api.Projeto.Delivery.API.entity.Pedido;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+public class PedidoResponseDTO {
+    private Long id;
+    private String numeroPedido;
+    private LocalDateTime dataPedido;
+    private String status;
+    private BigDecimal valorTotal;
+    private String observacoes;
+    private Long clienteId;
+    private Long restauranteId;
+    private String itens;
+    private String nomeRestaurante;
+
+<span class="fc" id="L24">    public PedidoResponseDTO(Pedido pedido) {</span>
+<span class="fc" id="L25">        this.id = pedido.getId();</span>
+<span class="fc" id="L26">        this.numeroPedido = pedido.getNumeroPedido();</span>
+<span class="fc" id="L27">        this.dataPedido = pedido.getDataPedido();</span>
+<span class="fc" id="L28">        this.status = pedido.getStatus();</span>
+<span class="fc" id="L29">        this.valorTotal = pedido.getValorTotal();</span>
+<span class="fc" id="L30">        this.observacoes = pedido.getObservacoes();</span>
+<span class="fc" id="L31">        this.clienteId = pedido.getClienteId();</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        if (pedido.getRestaurante() != null) {</span>
+<span class="nc" id="L33">            this.restauranteId = pedido.getRestaurante().getId();</span>
+<span class="nc" id="L34">            this.nomeRestaurante = pedido.getRestaurante().getNome();</span>
+        }
+<span class="fc" id="L36">        this.itens = pedido.getItens();</span>
+<span class="fc" id="L37">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

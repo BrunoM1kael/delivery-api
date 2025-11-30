@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.delivery_api.Projeto.Delivery.API.GeneralCoverageTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.236 s -- in com.delivery_api.Projeto.Delivery.API.GeneralCoverageTest

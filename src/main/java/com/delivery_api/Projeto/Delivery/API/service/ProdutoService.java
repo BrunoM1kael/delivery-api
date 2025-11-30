@@ -6,6 +6,8 @@ import com.delivery_api.Projeto.Delivery.API.entity.Produto;
 import com.delivery_api.Projeto.Delivery.API.repository.ProdutoRepository;
 import com.delivery_api.Projeto.Delivery.API.repository.RestauranteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,8 @@ public class ProdutoService {
     @Autowired
     private RestauranteRepository restauranteRepository;
 
+    @Transactional
+    @CacheEvict(value = "produtos", allEntries = true)
     public ProdutoResponseDTO cadastrar(ProdutoRequestDTO dto) {
         if (!restauranteRepository.existsById(dto.getRestauranteId())) {
             throw new IllegalArgumentException("Restaurante não encontrado com ID: " + dto.getRestauranteId());
@@ -38,38 +42,34 @@ public class ProdutoService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "produtos")
     public List<ProdutoResponseDTO> listarTodos() {
+        System.out.println("--- Buscando produtos no banco de dados... ---");
         return produtoRepository.findAll().stream()
                 .map(ProdutoResponseDTO::new)
                 .toList();
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "produto", key = "#id") // Salva individualmente
     public ProdutoResponseDTO buscarPorId(Long id) {
         Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + id));
         return new ProdutoResponseDTO(produto);
     }
 
+    @Transactional
+    @CacheEvict(value = {"produtos", "produto"}, allEntries = true) // Limpa tudo se atualizar
     public ProdutoResponseDTO atualizar(Long id, ProdutoRequestDTO dto) {
         Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + id));
 
-        if (!restauranteRepository.existsById(dto.getRestauranteId())) {
-            throw new IllegalArgumentException("Restaurante não encontrado com ID: " + dto.getRestauranteId());
-        }
+        produto.setNome(dto.getNome()); // Exemplo
 
-        produto.setNome(dto.getNome());
-        produto.setDescricao(dto.getDescricao());
-        produto.setPreco(dto.getPreco());
-        produto.setCategoria(dto.getCategoria());
-        produto.setDisponivel(dto.getDisponivel());
-        produto.setRestauranteId(dto.getRestauranteId());
-
-        produto = produtoRepository.save(produto);
-        return new ProdutoResponseDTO(produto);
+        return new ProdutoResponseDTO(produtoRepository.save(produto));
     }
 
+    @CacheEvict(value = {"produtos", "produto"}, allEntries = true)
     public void excluir(Long id) {
         if (!produtoRepository.existsById(id)) {
             throw new IllegalArgumentException("Produto não encontrado: " + id);
@@ -77,6 +77,7 @@ public class ProdutoService {
         produtoRepository.deleteById(id);
     }
 
+    @CacheEvict(value = {"produtos", "produto"}, allEntries = true)
     public void inativar(Long id) {
         Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado: " + id));

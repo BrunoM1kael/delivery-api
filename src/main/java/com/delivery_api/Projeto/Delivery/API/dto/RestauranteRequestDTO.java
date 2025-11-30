@@ -3,7 +3,7 @@ package com.delivery_api.Projeto.Delivery.API.dto;
 import com.delivery_api.Projeto.Delivery.API.validation.ValidCEP;
 import com.delivery_api.Projeto.Delivery.API.validation.ValidCategoria;
 import com.delivery_api.Projeto.Delivery.API.validation.ValidTelefone;
-import io.swagger.v3.oas.annotations.media.Schema; // Importante!
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 

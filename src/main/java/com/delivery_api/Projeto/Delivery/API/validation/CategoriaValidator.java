@@ -14,7 +14,6 @@ public class CategoriaValidator implements ConstraintValidator<ValidCategoria, S
     @Override
     public boolean isValid(String valor, ConstraintValidatorContext context) {
         if (valor == null || valor.trim().isEmpty()) return true; // @NotBlank cuida disso
-        // Verifica se a categoria enviada está na lista (ignorando maiúsculas/minúsculas)
         return CATEGORIAS_PERMITIDAS.stream()
                 .anyMatch(c -> c.equalsIgnoreCase(valor));
     }
